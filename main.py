@@ -49,17 +49,21 @@ EXPECTED_SHA256 = (
 )
 
 
-def main() -> None:
-    # Gate check, mirroring the sealed scorer: UTF-8 text, 1 to 200
-    # characters, not only white space.
-    if not 1 <= len(TEXT) <= MAX_CHARS:
+def validate_entry(text: str) -> None:
+    """Gate check, mirroring the sealed scorer: UTF-8 text, 1 to 200
+    characters, not only white space, and a single line."""
+    if not 1 <= len(text) <= MAX_CHARS:
         raise SystemExit(
-            f"entry is {len(TEXT)} characters, must be 1 to {MAX_CHARS}"
+            f"entry is {len(text)} characters, must be 1 to {MAX_CHARS}"
         )
-    if not TEXT.strip():
+    if not text.strip():
         raise SystemExit("entry is only white space")
-    if "\n" in TEXT or "\r" in TEXT:
+    if "\n" in text or "\r" in text:
         raise SystemExit("entry must be a single line")
+
+
+def main() -> None:
+    validate_entry(TEXT)
 
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
